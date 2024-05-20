@@ -40,6 +40,17 @@ public class Server {
         }
     }
 
+    public static void main(String[] args) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(5555);
+            Server server = new Server(serverSocket);
+            server.serverStart();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 
 }
