@@ -20,7 +20,7 @@ public class Server {
                 ClientHandler clientHandler = new ClientHandler(socket);
 
                 // Still needs to be fixed
-                Thread thread = new Thread(ClientHandler);
+                Thread thread = new Thread(clientHandler);
                 thread.start();
 
                 System.out.println("New client has been connected!!");
