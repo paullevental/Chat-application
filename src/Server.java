@@ -18,18 +18,19 @@ public class Server {
 
                 Socket socket = serverSocket.accept();
                 ClientHandler clientHandler = new ClientHandler(socket);
+
+                // Still needs to be fixed
                 Thread thread = new Thread(ClientHandler);
                 thread.start();
 
                 System.out.println("New client has been connected!!");
             }
         } catch (IOException e) {
-            // method for handling input/output exception
             closeServer();
         }
     }
 
-    // closes server, if IO exception caught
+    // closes server, if IO exception caught, handles IO Exception
     public void closeServer() {
         try {
             if (serverSocket != null) {
@@ -42,7 +43,7 @@ public class Server {
 
     public static void main(String[] args) {
         try {
-            ServerSocket serverSocket = new ServerSocket(5555);
+            ServerSocket serverSocket = new ServerSocket(1234);
             Server server = new Server(serverSocket);
             server.serverStart();
         } catch (IOException e) {
