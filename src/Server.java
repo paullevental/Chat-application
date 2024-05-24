@@ -12,6 +12,7 @@ public class Server {
 
     // starts server Socket
     public void serverStart() {
+        System.out.println("/=====/ SERVER \\=====\\");
         try {
             // start server while socket is open
             while (!serverSocket.isClosed()) {
@@ -19,7 +20,7 @@ public class Server {
                 ClientHandler clientHandler = new ClientHandler(socket);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
-                System.out.println("New client has been connected!!");
+                System.out.println(clientHandler.getClientUsername() + " has connected to server!!");
             }
         } catch (IOException e) {
             closeServer();
@@ -47,7 +48,5 @@ public class Server {
         }
 
     }
-
-
 
 }
