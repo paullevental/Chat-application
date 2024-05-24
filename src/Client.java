@@ -79,7 +79,6 @@ public class Client{
     public static void main(String[] args) {
         try {
             Scanner scanner = new Scanner(System.in);
-            System.out.println("|==========================|");
             System.out.println("Enter your username to connect to messaging system");
             String username = scanner.nextLine();
             Socket socket = new Socket("localhost", 9988);
