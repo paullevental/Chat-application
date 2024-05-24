@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ClientHandler implements Runnable {
 
@@ -17,13 +18,31 @@ public class ClientHandler implements Runnable {
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.clientUserName = bufferedReader.readLine();
-            System.out.println("SERVER: " + clientUserName + "has entered the server");
-            clientHandlers.add(this);
+            addClientHandler(clientUserName);
         } catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
         }
     }
 
+    public void addClientHandler(String clientUserName) {
+        if (!clientHandlers.contains(this)) {
+            clientHandlers.add(this);
+            System.out.println("SERVER: " + clientUserName + " has entered the server");
+        }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        ClientHandler that = (ClientHandler) object;
+        return Objects.equals(socket, that.socket) && Objects.equals(bufferedReader, that.bufferedReader) && Objects.equals(bufferedWriter, that.bufferedWriter) && Objects.equals(clientUserName, that.clientUserName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(socket, bufferedReader, bufferedWriter, clientUserName);
+    }
 
     @Override
     public void run() {
@@ -42,14 +61,14 @@ public class ClientHandler implements Runnable {
 
 
     public void transmitMessage(String clientMessage) {
-        System.out.println("|==========================|");
+        System.out.println("|=============================|");
         for (ClientHandler handler : clientHandlers) {
             try {
                 if (!handler.clientUserName.equalsIgnoreCase(clientUserName)) {
                     handler.bufferedWriter.write(clientMessage);
                     handler.bufferedWriter.newLine();
                     handler.bufferedWriter.flush();
-                    System.out.println("|==========================|");
+                    System.out.println("|=============================|");
                 }
             } catch (IOException e) {
                 closeEverything(socket, bufferedReader, bufferedWriter);

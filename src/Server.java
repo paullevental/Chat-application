@@ -15,14 +15,11 @@ public class Server {
         try {
             // start server while socket is open
             while (!serverSocket.isClosed()) {
-
                 Socket socket = serverSocket.accept();
                 ClientHandler clientHandler = new ClientHandler(socket);
-
-                // Still needs to be fixed
                 Thread thread = new Thread(clientHandler);
                 thread.start();
-
+                System.out.println("|=============================|");
                 System.out.println("New client has been connected!!");
             }
         } catch (IOException e) {
@@ -43,7 +40,7 @@ public class Server {
 
     public static void main(String[] args) {
         try {
-            ServerSocket serverSocket = new ServerSocket(1234);
+            ServerSocket serverSocket = new ServerSocket(9988);
             Server server = new Server(serverSocket);
             server.serverStart();
         } catch (IOException e) {
