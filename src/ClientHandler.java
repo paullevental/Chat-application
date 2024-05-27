@@ -13,65 +13,27 @@ public class ClientHandler implements Runnable {
     private String clientUserName;
 
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        ClientHandler that = (ClientHandler) object;
-        return Objects.equals(clientUserName, that.clientUserName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(socket, bufferedReader, bufferedWriter, clientUserName);
-    }
-
     public ClientHandler(Socket socket) {
         try {
-            while (true) {
-                this.socket = socket;
-                this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                this.clientUserName = bufferedReader.readLine();
-                if (!usernames.contains(clientUserName)) {
-                    usernames.add(clientUserName);
-                    clientHandlers.add(this);
-                    break;
-                } else {
-                    bufferedWriter.write("Username: " + clientUserName + " is already in use.");
-                    bufferedWriter.newLine();
-                    bufferedWriter.flush();
-                }
-            }
+            this.socket = socket;
+            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.clientUserName = bufferedReader.readLine();
+            clientHandlers.add(this);
+//                if (!usernames.contains(clientUserName)) {
+//                    usernames.add(clientUserName);
+//                    clientHandlers.add(this);
+//                    break;
+//                } else {
+//                    bufferedWriter.write("Username: " + clientUserName + " is already in use.");
+//                    bufferedWriter.newLine();
+//                    bufferedWriter.flush();
+//                }
             transmitMessage("SERVER: " + clientUserName + " has entered the chat!");
         } catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
         }
     }
-
-    /*
-    public void addClientHandler(String clientUsername){
-        ArrayList<String> userNames = new ArrayList<>();
-        for (ClientHandler handler : clientHandlers) {
-            userNames.add(handler.clientUserName);
-        }
-        while (true) {
-            try {
-                if (!userNames.contains(clientUsername)) {
-                    clientHandlers.add(this);
-                    System.out.println("SERVER: " + clientUsername + " has entered the server");
-                    break;
-                } else {
-
-                }
-            } catch (IOException e) {
-                closeEverything(socket, bufferedReader, bufferedWriter);
-            }
-        }
-    }
-    */
-
-
 
     public String getClientUsername() {
         return clientUserName;
@@ -130,5 +92,17 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        ClientHandler that = (ClientHandler) object;
+        return Objects.equals(clientUserName, that.clientUserName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(socket, bufferedReader, bufferedWriter, clientUserName);
+    }
 
 }

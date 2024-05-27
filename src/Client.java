@@ -1,14 +1,12 @@
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
 
-public class Client{
-
+public class Client {
     private Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String username;
-
 
     public Client(Socket socket, String username) {
         try {
@@ -21,19 +19,11 @@ public class Client{
         }
     }
 
-    public void sendMessage() {
+    public void sendMessage(String messageToSend) {
         try {
-            bufferedWriter.write(username);
+            bufferedWriter.write(username + " : " + messageToSend);
             bufferedWriter.newLine();
             bufferedWriter.flush();
-
-            Scanner scanner = new Scanner(System.in);
-            while (socket.isConnected()) {
-                String messageToSend = scanner.nextLine();
-                bufferedWriter.write(username + " : " + messageToSend);
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
-            }
         } catch (IOException e) {
             closeClient(socket, bufferedReader, bufferedWriter);
         }
@@ -44,11 +34,9 @@ public class Client{
             @Override
             public void run() {
                 String groupMessage;
-
                 while (socket.isConnected()) {
                     try {
                         groupMessage = bufferedReader.readLine();
-                        System.out.println(groupMessage);
                     } catch (IOException e) {
                         closeClient(socket, bufferedReader, bufferedWriter);
                         break;
@@ -57,7 +45,6 @@ public class Client{
             }
         }).start();
     }
-
 
     public void closeClient(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
         try {
@@ -75,22 +62,17 @@ public class Client{
         }
     }
 
-
     public static void main(String[] args) {
         try {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Enter your username to connect to messaging system");
-            String username = scanner.nextLine();
+            String username = JOptionPane.showInputDialog("Enter your username to connect to the messaging system");
             Socket socket = new Socket("localhost", 9988);
             Client client = new Client(socket, username);
+            ClientRoom clientRoom = new ClientRoom(client);
             client.listenForMessage();
-            client.sendMessage();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
 
 
 }
