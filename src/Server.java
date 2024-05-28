@@ -20,7 +20,7 @@ public class Server {
                 ClientHandler clientHandler = new ClientHandler(socket);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
-                System.out.println(clientHandler.getClientUsername() + " has connected to server!!");
+                // System.out.println(clientHandler.getClientUsername() + " has connected to server!!");
             }
         } catch (IOException e) {
             closeServer();

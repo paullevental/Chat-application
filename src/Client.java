@@ -1,19 +1,20 @@
-import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 
 public class Client {
+
     private Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
-    private String username;
+    public String username;
+    private ClientRoom clientRoom;
 
-    public Client(Socket socket, String username) {
+    public Client(Socket socket) {
         try {
             this.socket = socket;
-            this.username = username;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.clientRoom = new ClientRoom(this); // Pass the client to the ClientRoom
         } catch (IOException e) {
             closeClient(socket, bufferedReader, bufferedWriter);
         }
@@ -21,7 +22,7 @@ public class Client {
 
     public void sendMessage(String messageToSend) {
         try {
-            bufferedWriter.write(username + " : " + messageToSend);
+            bufferedWriter.write(messageToSend);
             bufferedWriter.newLine();
             bufferedWriter.flush();
         } catch (IOException e) {
@@ -37,6 +38,9 @@ public class Client {
                 while (socket.isConnected()) {
                     try {
                         groupMessage = bufferedReader.readLine();
+                        if (groupMessage != null) {
+                            clientRoom.appendMessage(groupMessage);
+                        }
                     } catch (IOException e) {
                         closeClient(socket, bufferedReader, bufferedWriter);
                         break;
@@ -44,6 +48,10 @@ public class Client {
                 }
             }
         }).start();
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void closeClient(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
@@ -64,15 +72,11 @@ public class Client {
 
     public static void main(String[] args) {
         try {
-            String username = JOptionPane.showInputDialog("Enter your username to connect to the messaging system");
+            // String username = JOptionPane.showInputDialog("Enter your username to connect to the messaging system");
             Socket socket = new Socket("localhost", 9988);
-            Client client = new Client(socket, username);
-            ClientRoom clientRoom = new ClientRoom(client);
-            client.listenForMessage();
+            new Client(socket);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
 }

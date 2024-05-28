@@ -6,43 +6,28 @@ import java.util.Objects;
 public class ClientHandler implements Runnable {
 
     public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
-    public static ArrayList<String> usernames = new ArrayList<>();
     private Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String clientUserName;
-
+    // public String clientMessage;
 
     public ClientHandler(Socket socket) {
         try {
             this.socket = socket;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.clientUserName = bufferedReader.readLine();
             clientHandlers.add(this);
-//                if (!usernames.contains(clientUserName)) {
-//                    usernames.add(clientUserName);
-//                    clientHandlers.add(this);
-//                    break;
-//                } else {
-//                    bufferedWriter.write("Username: " + clientUserName + " is already in use.");
-//                    bufferedWriter.newLine();
-//                    bufferedWriter.flush();
-//                }
-            transmitMessage("SERVER: " + clientUserName + " has entered the chat!");
+            this.clientUserName = bufferedReader.readLine();
+            transmitMessage("SERVER : " + clientUserName + " has entered the chat!");
         } catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
         }
     }
 
-    public String getClientUsername() {
-        return clientUserName;
-    }
-
     @Override
     public void run() {
         String clientMessage;
-
         while (socket.isConnected()) {
             try {
                 clientMessage = bufferedReader.readLine();
@@ -53,7 +38,6 @@ public class ClientHandler implements Runnable {
             }
         }
     }
-
 
     public void transmitMessage(String clientMessage) {
         for (ClientHandler handler : clientHandlers) {
@@ -69,6 +53,9 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    public void setUserName(String clientUserName) {
+        this.clientUserName = clientUserName;
+    }
 
     public void removeClientHandler() {
         clientHandlers.remove(this);
@@ -104,5 +91,4 @@ public class ClientHandler implements Runnable {
     public int hashCode() {
         return Objects.hash(socket, bufferedReader, bufferedWriter, clientUserName);
     }
-
 }
