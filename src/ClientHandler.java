@@ -10,7 +10,6 @@ public class ClientHandler implements Runnable {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String clientUserName;
-    // public String clientMessage;
 
     public ClientHandler(Socket socket) {
         try {

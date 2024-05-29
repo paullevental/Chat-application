@@ -10,7 +10,6 @@ public class Server {
         this.serverSocket = serverSocket;
     }
 
-    // starts server Socket
     public void serverStart() {
         System.out.println("/=====/ SERVER \\=====\\");
         try {
@@ -20,7 +19,6 @@ public class Server {
                 ClientHandler clientHandler = new ClientHandler(socket);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
-                // System.out.println(clientHandler.getClientUsername() + " has connected to server!!");
             }
         } catch (IOException e) {
             closeServer();

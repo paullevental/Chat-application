@@ -52,6 +52,7 @@ public class Client {
 
     public void setUsername(String username) {
         this.username = username;
+        sendMessage(username);
     }
 
     public void closeClient(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
@@ -72,7 +73,6 @@ public class Client {
 
     public static void main(String[] args) {
         try {
-            // String username = JOptionPane.showInputDialog("Enter your username to connect to the messaging system");
             Socket socket = new Socket("localhost", 9988);
             new Client(socket);
         } catch (IOException e) {
