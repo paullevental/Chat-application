@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.Socket;
 
+
+// Handles actions made by a client/user
 public class Client {
 
     private Socket socket;
@@ -9,6 +11,7 @@ public class Client {
     public String username;
     private ClientRoom clientRoom;
 
+    // instantiates Client class
     public Client(Socket socket) {
         try {
             this.socket = socket;
@@ -20,6 +23,7 @@ public class Client {
         }
     }
 
+    // sends a message using the socket
     public void sendMessage(String messageToSend) {
         try {
             bufferedWriter.write(messageToSend);
@@ -30,6 +34,9 @@ public class Client {
         }
     }
 
+    // listens for message
+    // creates a thread which listens for message from client
+    // closes client if socket isn't connected
     public void listenForMessage() {
         new Thread(new Runnable() {
             @Override
@@ -50,11 +57,14 @@ public class Client {
         }).start();
     }
 
+    // sets clients username
+    // sends a message on socket about clients username
     public void setUsername(String username) {
         this.username = username;
         sendMessage(username);
     }
 
+    // Closes every field associated with client that has disrupted socket
     public void closeClient(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
         try {
             if (bufferedReader != null) {
@@ -71,6 +81,7 @@ public class Client {
         }
     }
 
+    // main method to create a client
     public static void main(String[] args) {
         try {
             Socket socket = new Socket("localhost", 9988);

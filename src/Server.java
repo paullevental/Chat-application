@@ -2,18 +2,19 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+// Server class
 public class Server {
 
     private ServerSocket serverSocket;
 
+    // instantiates Server class, assigns a ServerSocket
     public Server(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
     }
 
+    // Starts Server | starts a thread with a clientHandler
     public void serverStart() {
-        System.out.println("/=====/ SERVER \\=====\\");
         try {
-            // start server while socket is open
             while (!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
                 ClientHandler clientHandler = new ClientHandler(socket);
@@ -36,6 +37,7 @@ public class Server {
         }
     }
 
+    // main method to create server
     public static void main(String[] args) {
         try {
             ServerSocket serverSocket = new ServerSocket(9988);

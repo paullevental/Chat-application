@@ -1,8 +1,8 @@
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Objects;
 
+// Manages actions between server and client(s)
 public class ClientHandler implements Runnable {
 
     public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
@@ -11,6 +11,7 @@ public class ClientHandler implements Runnable {
     private BufferedWriter bufferedWriter;
     private String clientUserName;
 
+    // instantiates ClientHandler class, creates bufferedWriter and reader fields
     public ClientHandler(Socket socket) {
         try {
             this.socket = socket;
@@ -24,6 +25,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    // overwritten run method, to transmit client messages will socket connected to server
     @Override
     public void run() {
         String clientMessage;
@@ -38,6 +40,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    // transmits message for all client Handlers in static ArrayList
     public void transmitMessage(String clientMessage) {
         for (ClientHandler handler : clientHandlers) {
             try {
@@ -52,15 +55,13 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public void setUserName(String clientUserName) {
-        this.clientUserName = clientUserName;
-    }
-
+    // Removes client from SERVEr
     public void removeClientHandler() {
         clientHandlers.remove(this);
         transmitMessage("SERVER: " + clientUserName + " has left server");
     }
 
+    // Closes every field associated with client that has disrupted socket
     public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
         removeClientHandler();
         try {
@@ -78,16 +79,4 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        ClientHandler that = (ClientHandler) object;
-        return Objects.equals(clientUserName, that.clientUserName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(socket, bufferedReader, bufferedWriter, clientUserName);
-    }
 }
