@@ -8,6 +8,7 @@ public class ClientHandlerManager {
     private static ClientHandlerManager instance = null;
     private static HashMap<Integer, ArrayList<ClientHandler>> clientHandlerHashMap = new HashMap<>();
 
+
     private ClientHandlerManager() {}
 
     public static synchronized ClientHandlerManager getInstance() {
@@ -15,10 +16,6 @@ public class ClientHandlerManager {
             instance = new ClientHandlerManager();
         }
         return instance;
-    }
-
-    public HashMap<Integer, ArrayList<ClientHandler>> getClientHandlerHashMap() {
-        return clientHandlerHashMap;
     }
 
     public void addClientHandler(int key, ClientHandler handler) {

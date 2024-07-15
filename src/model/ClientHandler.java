@@ -29,6 +29,7 @@ public class ClientHandler implements Runnable {
         while (socket.isConnected()) {
             try {
                 messageFromClient = reader.readLine();
+                System.out.println(messageFromClient);
                 if (messageFromClient != null) {
                     ClientHandlerManager.getInstance().broadcastMessage(hashMapKey, messageFromClient);
                 }
@@ -51,6 +52,7 @@ public class ClientHandler implements Runnable {
     }
 
     public void closeEverything(Socket socket, BufferedReader reader, BufferedWriter writer) {
+        ServerCapacityTracker.getInstance(8).decrementCapacity(hashMapKey);
         try {
             if (reader != null) {
                 reader.close();

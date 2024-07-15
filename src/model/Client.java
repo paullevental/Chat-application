@@ -12,10 +12,19 @@ public class Client {
     private BufferedWriter bufferedWriter;
     private String username;
     private ClientRoom clientRoom;
+    public ClientHandler handler;
 
     // instantiates Client class
     public Client() {
         this.clientRoom = new ClientRoom(this);
+    }
+
+    public Client(Socket socket, int hashMapKey) {
+        handler = new ClientHandler(socket, hashMapKey);
+    }
+
+    public ClientHandler getHandler() {
+        return handler;
     }
 
     public void connectClientToServer(Socket socket) {
@@ -50,8 +59,12 @@ public class Client {
                 while (socket.isConnected()) {
                     try {
                         groupMessage = bufferedReader.readLine();
+
                         if (groupMessage != null && !(groupMessage.equals(username))) {
                             clientRoom.appendMessage(groupMessage);
+                        }
+                        if (groupMessage.equals(username)) {
+                            clientRoom.appendMessage(username.substring(0, 1).toUpperCase() + username.substring(1) + " has joined Server.");
                         }
                     } catch (IOException e) {
                         closeClient(socket, bufferedReader, bufferedWriter);

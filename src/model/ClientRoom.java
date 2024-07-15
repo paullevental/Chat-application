@@ -20,6 +20,7 @@ public class ClientRoom extends JFrame {
     private JButton sendButton;
     private Client client;
     private String username;
+    private int portNumber;
 
     public ClientRoom(Client client) {
         setSize(400, 480);
@@ -62,8 +63,10 @@ public class ClientRoom extends JFrame {
                     null,
                     null
             );
-            if (username != null) {
+            if (username != null && !username.trim().isEmpty()) {
                 break;
+            } else if (username == null) {
+                System.exit(0); // Exit the program if the user cancels or closes the dialog
             }
         }
         client.setUsername(username);
@@ -76,7 +79,7 @@ public class ClientRoom extends JFrame {
         for (int i = 0; i < 8; i++) {
             int index = i;
 
-            JButton serverButton = new JButton(value + " / 10 people" );
+            JButton serverButton = new JButton(ServerCapacityTracker.getInstance(8).getCapacity(i) + " Clients" );
             setButtonStyle(serverButton, i);
 
             serverButton.addActionListener(new ActionListener() {
@@ -107,25 +110,23 @@ public class ClientRoom extends JFrame {
     }
 
     public void handleButtonActionCommand(int index) {
-        userCapacity[index] += + 1;
+        ServerCapacityTracker.getInstance(8).incrementCapacity(index);
         startServer(index);
+
         client.sendMessage(username);
     }
 
     public void startServer(int portIndex) {
+        System.out.println(Server.serverPorts.length);
+        portNumber = Server.serverPorts[portIndex];
+
         try {
-            int portNumber = Server.serverPorts[portIndex];
-            Server server = new Server(portIndex);
-            Thread serverThread = new Thread(server);
-            if (!serverThread.isAlive()) {
-                serverThread.start();
-            }
-            new Thread().start();
             client.connectClientToServer(new Socket("localhost", portNumber));
-            client.listenForMessage();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        setTitle(username + " localhost : " + portNumber);
+        client.listenForMessage();
     }
 
     public void createMessageRoom() {
@@ -190,7 +191,6 @@ public class ClientRoom extends JFrame {
         if (!inputField.getText().isBlank()) {
             String message = inputField.getText();
             inputField.setText("");
-            // textArea.append("You : " + message + "\n");
             client.sendMessage(username + " : " + message);
         }
     }
@@ -199,3 +199,4 @@ public class ClientRoom extends JFrame {
         textArea.append(message + "\n");
     }
 }
+
