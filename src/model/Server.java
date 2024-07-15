@@ -1,23 +1,31 @@
+package model;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 // Server class
-public class Server {
+public class Server implements Runnable {
 
     private ServerSocket serverSocket;
+    public static int[] serverPorts = {1111,2222,3333,4444,5555,6666,7777,8888};
+    public int hashMapKey;
 
     // instantiates Server class, assigns a ServerSocket
-    public Server(ServerSocket serverSocket) {
-        this.serverSocket = serverSocket;
+    public Server(int hashMapKey) {
+        this.hashMapKey = hashMapKey;
     }
 
     // Starts Server | starts a thread with a clientHandler
-    public void serverStart() {
+    @Override
+    public void run() {
+
         try {
+            this.serverSocket = new ServerSocket(serverPorts[hashMapKey]);
             while (!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
-                ClientHandler clientHandler = new ClientHandler(socket);
+                ClientHandler clientHandler = new ClientHandler(socket, hashMapKey);
+                ClientHandlerManager.getInstance().addClientHandler(hashMapKey, clientHandler);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
             }
@@ -37,16 +45,5 @@ public class Server {
         }
     }
 
-    // main method to create server
-    public static void main(String[] args) {
-        try {
-            ServerSocket serverSocket = new ServerSocket(9988);
-            Server server = new Server(serverSocket);
-            server.serverStart();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 
 }

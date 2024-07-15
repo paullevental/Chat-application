@@ -1,3 +1,5 @@
+package model;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -8,16 +10,19 @@ public class Client {
     private Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
-    public String username;
+    private String username;
     private ClientRoom clientRoom;
 
     // instantiates Client class
-    public Client(Socket socket) {
+    public Client() {
+        this.clientRoom = new ClientRoom(this);
+    }
+
+    public void connectClientToServer(Socket socket) {
         try {
             this.socket = socket;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.clientRoom = new ClientRoom(this); // Pass the client to the ClientRoom
         } catch (IOException e) {
             closeClient(socket, bufferedReader, bufferedWriter);
         }
@@ -45,7 +50,7 @@ public class Client {
                 while (socket.isConnected()) {
                     try {
                         groupMessage = bufferedReader.readLine();
-                        if (groupMessage != null) {
+                        if (groupMessage != null && !(groupMessage.equals(username))) {
                             clientRoom.appendMessage(groupMessage);
                         }
                     } catch (IOException e) {
@@ -58,10 +63,8 @@ public class Client {
     }
 
     // sets clients username
-    // sends a message on socket about clients username
     public void setUsername(String username) {
         this.username = username;
-        sendMessage(username);
     }
 
     // Closes every field associated with client that has disrupted socket
@@ -83,11 +86,6 @@ public class Client {
 
     // main method to create a client
     public static void main(String[] args) {
-        try {
-            Socket socket = new Socket("localhost", 9988);
-            new Client(socket);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        new Client();
     }
 }
