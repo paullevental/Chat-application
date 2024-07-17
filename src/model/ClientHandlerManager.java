@@ -27,8 +27,16 @@ public class ClientHandlerManager {
         clientHandlerHashMap.put(key, handlers);
     }
 
+    public void removeClientHandler(int key, String message, ClientHandler handler) {
+        ArrayList<ClientHandler> handlers = clientHandlerHashMap.get(key);
+        handlers.remove(handler);
+        clientHandlerHashMap.put(key, handlers);
+        broadcastMessage(key, message);
+    }
+
     public void broadcastMessage(int key, String message) {
         ArrayList<ClientHandler> handlers = clientHandlerHashMap.get(key);
+        System.out.println(handlers.size());
         if (handlers != null) {
             for (ClientHandler handler : handlers) {
                 handler.sendMessage(message);

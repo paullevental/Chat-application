@@ -21,14 +21,17 @@ public class ClientRoom extends JFrame {
     private Client client;
     private String username;
     private int portNumber;
+    private int[] serverCapacitiesArray;
 
-    public ClientRoom(Client client) {
-        setSize(400, 480);
+    public ClientRoom(Client client, int[] serverCapacitiesArray) {
+
+        setSize(500, 480);
         setTitle("Messaging System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
 
+        this.serverCapacitiesArray = serverCapacitiesArray;
         this.pageLayout = new CardLayout();
         this.client = client;
         this.textArea = new JTextArea();
@@ -50,6 +53,7 @@ public class ClientRoom extends JFrame {
         listenForInputField();
         listenForSendButton();
     }
+
 
     public void sendUsernameHandler() {
         initializeOptionPane();
@@ -78,18 +82,23 @@ public class ClientRoom extends JFrame {
 
         for (int i = 0; i < 8; i++) {
             int index = i;
+            int value = serverCapacitiesArray[i];
 
-            JButton serverButton = new JButton(ServerCapacityTracker.getInstance(8).getCapacity(i) + " Clients" );
+            JButton serverButton = new JButton(value + "/10 Clients" );
             setButtonStyle(serverButton, i);
 
-            serverButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    handleButtonActionCommand(index);
-                    pageLayout.show(mainPanel, "Room Page");
-                }
-            });
-
+            if (value < 10) {
+                serverButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        handleButtonActionCommand(index);
+                        pageLayout.show(mainPanel, "Room Page");
+                    }
+                });
+            }
+            if (value >= 10) {
+                serverButton.setEnabled(false);
+            }
             serverPage.add(serverButton);
         }
 
@@ -110,14 +119,15 @@ public class ClientRoom extends JFrame {
     }
 
     public void handleButtonActionCommand(int index) {
-        ServerCapacityTracker.getInstance(8).incrementCapacity(index);
+        serverCapacitiesArray[index] += 1;
+        String jsonString = Json.arrayToJson(serverCapacitiesArray);
+        Json.writeToJson(jsonString);
         startServer(index);
-
-        client.sendMessage(username);
+        client.listenForMessage();
+        client.sendMessage(username + " has joined the server.");
     }
 
     public void startServer(int portIndex) {
-        System.out.println(Server.serverPorts.length);
         portNumber = Server.serverPorts[portIndex];
 
         try {
@@ -126,15 +136,14 @@ public class ClientRoom extends JFrame {
             throw new RuntimeException(e);
         }
         setTitle(username + " localhost : " + portNumber);
-        client.listenForMessage();
     }
 
     public void createMessageRoom() {
         this.messageRoomPage = new JPanel(new BorderLayout());
-        inputPanel.setSize(new Dimension(400, 30));
-        inputPanel.setPreferredSize(new Dimension(400, 30));
+        inputPanel.setSize(new Dimension(500, 30));
+        inputPanel.setPreferredSize(new Dimension(500, 30));
         textArea.setFont(new Font("Arial", Font.BOLD, 12));
-        textArea.setSize(new Dimension(400, 300));
+        textArea.setSize(new Dimension(500, 300));
         textArea.setEditable(false);
         textArea.setForeground(Color.WHITE);
         textArea.setBackground(new Color(33, 31, 31));

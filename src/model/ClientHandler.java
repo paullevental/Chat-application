@@ -1,7 +1,8 @@
 package model;
 
 // Manages actions between server and client(s)
-//public class ClientHandler implements Runnable
+// public class ClientHandler implements Runnable
+
 import java.io.*;
 import java.net.Socket;
 
@@ -10,12 +11,12 @@ public class ClientHandler implements Runnable {
     private Socket socket;
     private BufferedReader reader;
     private BufferedWriter writer;
-    private int hashMapKey;
+    private int indexKey;
 
-    public ClientHandler(Socket socket, int hashMapKey) {
+    public ClientHandler(Socket socket, int indexKey) {
         try {
             this.socket = socket;
-            this.hashMapKey = hashMapKey;
+            this.indexKey = indexKey;
             this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         } catch (IOException e) {
@@ -31,10 +32,14 @@ public class ClientHandler implements Runnable {
                 messageFromClient = reader.readLine();
                 System.out.println(messageFromClient);
                 if (messageFromClient != null) {
-                    ClientHandlerManager.getInstance().broadcastMessage(hashMapKey, messageFromClient);
+                    ClientHandlerManager.getInstance().broadcastMessage(indexKey, messageFromClient);
                 }
             } catch (IOException e) {
-                ClientHandlerManager.getInstance().broadcastMessage(hashMapKey, "A client Disconnected");
+                int[] serverCapacities = Json.readJsonFile();
+                assert serverCapacities != null;
+                serverCapacities[indexKey] -= 1;
+                Json.writeToJson(Json.arrayToJson(serverCapacities));
+                ClientHandlerManager.getInstance().removeClientHandler(indexKey, "Client has disconnected", this);
                 closeEverything(socket, reader, writer);
                 break;
             }
@@ -52,7 +57,6 @@ public class ClientHandler implements Runnable {
     }
 
     public void closeEverything(Socket socket, BufferedReader reader, BufferedWriter writer) {
-        ServerCapacityTracker.getInstance(8).decrementCapacity(hashMapKey);
         try {
             if (reader != null) {
                 reader.close();
