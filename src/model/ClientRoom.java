@@ -77,14 +77,24 @@ public class ClientRoom extends JFrame {
     }
 
     public void createServerSelectionPage() {
-        this.serverPage = new JPanel();
-        serverPage.setPreferredSize(new Dimension(500, 480));
+        JPanel serverSelection = new JPanel(new BorderLayout());
+        JLabel label = new JLabel("Select Server to join! ");
+        label.setFont(new Font("Sans", Font.BOLD, 18));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setPreferredSize(new Dimension(500, 330));
+        serverSelection.add(label, BorderLayout.CENTER);
+
+        JPanel serverPageButtons = new JPanel();
+        serverPageButtons.setSize(500, 200);
+        this.serverPage = new JPanel(new BorderLayout()); // 4 rows, 2 columns
+        serverPage.setPreferredSize(new Dimension(500, 550));
+
 
         for (int i = 0; i < 8; i++) {
             int index = i;
             int value = serverCapacitiesArray[i];
 
-            JButton serverButton = new JButton(value + "/10 Clients" );
+            JButton serverButton = new JButton(value + "/10 Clients");
             setButtonStyle(serverButton, i);
 
             if (value < 10) {
@@ -99,12 +109,15 @@ public class ClientRoom extends JFrame {
             if (value >= 10) {
                 serverButton.setEnabled(false);
             }
-            serverPage.add(serverButton);
+            serverPageButtons.add(serverButton);
         }
 
-        serverPage.revalidate();
-        serverPage.repaint();
+        serverPage.add(serverSelection, BorderLayout.NORTH);
+        serverPage.add(serverPageButtons, BorderLayout.CENTER);
+        mainPanel.add(serverPage, "Server Page");
         setVisible(true);
+        revalidate();
+        repaint();
     }
 
     public void setButtonStyle(JButton button, int i) {
