@@ -89,7 +89,6 @@ public class ClientRoom extends JFrame {
         this.serverPage = new JPanel(new BorderLayout()); // 4 rows, 2 columns
         serverPage.setPreferredSize(new Dimension(500, 550));
 
-
         for (int i = 0; i < 8; i++) {
             int index = i;
             int value = serverCapacitiesArray[i];
