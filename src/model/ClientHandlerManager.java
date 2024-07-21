@@ -36,7 +36,6 @@ public class ClientHandlerManager {
 
     public void broadcastMessage(int key, String message) {
         ArrayList<ClientHandler> handlers = clientHandlerHashMap.get(key);
-        System.out.println(handlers.size());
         if (handlers != null) {
             for (ClientHandler handler : handlers) {
                 handler.sendMessage(message);

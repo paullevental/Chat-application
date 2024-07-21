@@ -14,3 +14,8 @@
 >* A total of 10 people can be in one server
 >* Users can also switch from light mode to dark mode with button click in chat room
 >* Potential custom messaging system implementation
+
+> On macOS systems, when a client disconnects, there is a bug where newly connected users to the server
+> will receive a "Client has disconnected" message. Also, the Json reading and writing component glitches
+> where the capacity is one more than it should be, especially when testing adding one client to a server than
+> disconnecting, in json file it will still say that there is a client in that server.

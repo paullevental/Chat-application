@@ -30,7 +30,6 @@ public class ClientHandler implements Runnable {
         while (socket.isConnected()) {
             try {
                 messageFromClient = reader.readLine();
-                System.out.println(messageFromClient);
                 if (messageFromClient != null) {
                     ClientHandlerManager.getInstance().broadcastMessage(indexKey, messageFromClient);
                 }
@@ -38,6 +37,7 @@ public class ClientHandler implements Runnable {
                 int[] serverCapacities = Json.readJsonFile();
                 assert serverCapacities != null;
                 serverCapacities[indexKey] -= 1;
+                System.out.println(1);
                 Json.writeToJson(Json.arrayToJson(serverCapacities));
                 ClientHandlerManager.getInstance().removeClientHandler(indexKey, "Client has disconnected", this);
                 closeEverything(socket, reader, writer);

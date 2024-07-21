@@ -43,13 +43,15 @@ public class ClientRoom extends JFrame {
 
         sendUsernameHandler();
         createServerSelectionPage();
-        mainPanel.add(serverPage, "Server Page");
-
         createMessageRoom();
+
+        mainPanel.add(serverPage, "Server Page");
         mainPanel.add(messageRoomPage, "Room Page");
 
         add(mainPanel);
+
         pageLayout.show(mainPanel, "Server Page");
+
         listenForInputField();
         listenForSendButton();
     }
@@ -115,8 +117,6 @@ public class ClientRoom extends JFrame {
         serverPage.add(serverPageButtons, BorderLayout.CENTER);
         mainPanel.add(serverPage, "Server Page");
         setVisible(true);
-        revalidate();
-        repaint();
     }
 
     public void setButtonStyle(JButton button, int i) {
